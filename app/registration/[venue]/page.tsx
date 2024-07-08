@@ -25,7 +25,7 @@ import {
 import { Activity, AlarmClockPlus, Badge, Clock, Clock1, Copy, CreditCard, DollarSign, LucideClock1, Truck, Users } from "lucide-react"
 export default function LoginForm() {
     return (
-        <div className="min-h-screen mx-auto flex justify-between flex-col  max-w-md ">
+        <div className="h-screen mx-auto flex justify-between flex-col  max-w-md ">
             <div className="flex-1 flex flex-col justify-center items-center">
                 <h1 className="scroll-m-20 text-7xl  tracking-tight lg:text-7xl font-['ChenYuluoyan-Thin-Monospaced']">
                     報到
