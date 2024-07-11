@@ -65,12 +65,12 @@ export default function SearchForm() {
                                             <SelectContent>
                                                 <SelectItem value="genesis">
                                                     <div className="flex items-start gap-3 text-muted-foreground">
-                                                        <Rabbit className="size-5" />
+
                                                         <div className="grid gap-0.5">
                                                             <p>
-                                                                Neural{" "}
+
                                                                 <span className="font-medium text-foreground">
-                                                                    Genesis
+                                                                    棒球場
                                                                 </span>
                                                             </p>
                                                             <p className="text-xs" data-description>
@@ -81,12 +81,12 @@ export default function SearchForm() {
                                                 </SelectItem>
                                                 <SelectItem value="explorer">
                                                     <div className="flex items-start gap-3 text-muted-foreground">
-                                                        <Bird className="size-5" />
+
                                                         <div className="grid gap-0.5">
                                                             <p>
-                                                                Neural{" "}
+
                                                                 <span className="font-medium text-foreground">
-                                                                    Explorer
+                                                                    體育館
                                                                 </span>
                                                             </p>
                                                             <p className="text-xs" data-description>
@@ -97,12 +97,12 @@ export default function SearchForm() {
                                                 </SelectItem>
                                                 <SelectItem value="quantum">
                                                     <div className="flex items-start gap-3 text-muted-foreground">
-                                                        <Turtle className="size-5" />
+
                                                         <div className="grid gap-0.5">
                                                             <p>
-                                                                Neural{" "}
+
                                                                 <span className="font-medium text-foreground">
-                                                                    Quantum
+                                                                    游泳池
                                                                 </span>
                                                             </p>
                                                             <p className="text-xs" data-description>

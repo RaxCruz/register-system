@@ -54,7 +54,7 @@ export default function AuditForm() {
         console.log(values)
     }
     return (
-        <Card x-chunk="dashboard-07-chunk-0" className=" shadow-none rounded-none border-2  border-red-400">
+        <Card x-chunk="dashboard-07-chunk-0" className=" shadow-none rounded-none">
             <CardHeader>
                 {/* <CardTitle>Product Details</CardTitle> */}
                 <CardDescription>

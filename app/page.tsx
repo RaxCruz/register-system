@@ -66,8 +66,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import AuditTable from "@/components/_ui/audit-mui-table"
+import { getAuditRecord } from "./actions/audit-api"
 
-export default function Dashboard() {
+export default async function Dashboard() {
+  const audit_records = await getAuditRecord('')
   return (
     <TooltipProvider>
       <div className="flex min-h-screen  flex-col bg-muted/40">
@@ -321,7 +323,7 @@ export default function Dashboard() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="overflow-hidden p-3 w-[100vw] md:container">
-                  <AuditTable />
+                  <AuditTable audit_records={audit_records} />
                 </CardContent>
                 <CardFooter>
                   <div className="text-xs text-muted-foreground">

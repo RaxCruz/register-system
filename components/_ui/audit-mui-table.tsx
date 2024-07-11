@@ -13,12 +13,20 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import AuditForm from './audit-form';
-
+import { Button } from "@/components/ui/button"
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from "@/components/ui/tabs"
+import { Badge } from '../ui/badge';
+import { AlignStartVertical, CheckCheck, FileClock, HardDriveUpload, Kanban, ListChecks } from 'lucide-react';
 function createData(
     name: string,
     calories: number,
@@ -49,8 +57,8 @@ function createData(
     };
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
-    const { row } = props;
+function Row(props: { audit_record: any }) {
+    const { audit_record } = props;
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -66,44 +74,48 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    {row.name}
+                    {audit_record.placename}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
+                <TableCell align="right">{audit_record.use_section}</TableCell>
+                <TableCell align="right">{audit_record.people_cnt}</TableCell>
+                <TableCell align="right">{audit_record.real_people}</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} className='p-0'>
                     <Collapse in={open} timeout="auto" unmountOnExit >
-                        <Box sx={{ margin: 0 }}>
-                            {/* <Typography variant="h6" gutterBottom component="div">
-                                History
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>Date</TableCell>
-                                        <TableCell>Customer</TableCell>
-                                        <TableCell align="right">Amount</TableCell>
-                                        <TableCell align="right">Total price ($)</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {row.history.map((historyRow) => (
-                                        <TableRow key={historyRow.date}>
-                                            <TableCell component="th" scope="row">
-                                                {historyRow.date}
-                                            </TableCell>
-                                            <TableCell>{historyRow.customerId}</TableCell>
-                                            <TableCell align="right">{historyRow.amount}</TableCell>
-                                            <TableCell align="right">
-                                                {Math.round(historyRow.amount * row.price * 100) / 100}
-                                            </TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table> */}
-                            <AuditForm />
+                        <Box sx={{ margin: 0, border: 'solid red 2px', position: 'relative' }}>
+                            <Tabs defaultValue="account" className="h-full" >
+                                <TabsList className="grid grid-cols-2 absolute right-3 top-5 p-0 h-auto w-auto">
+                                    <TabsTrigger value="account" className='data-[state=active]:bg-green-300'><HardDriveUpload size={16} /></TabsTrigger>
+                                    <TabsTrigger value="password" className='data-[state=active]:bg-green-300'><AlignStartVertical size={16} /></TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="account" className='mt-0'>
+                                    <AuditForm />
+                                </TabsContent>
+                                <TabsContent value="password" className='mt-0'>
+                                    <Card>
+                                        <CardHeader>
+                                            <CardTitle>Password</CardTitle>
+                                            <CardDescription>
+                                                Change your password here. After saving, you'll be logged out.
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardContent className="space-y-2">
+                                            <div className="space-y-1">
+                                                <Label htmlFor="current">Current password</Label>
+                                                <Input id="current" type="password" />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label htmlFor="new">New password</Label>
+                                                <Input id="new" type="password" />
+                                            </div>
+                                        </CardContent>
+                                        <CardFooter>
+                                            <Button>Save password</Button>
+                                        </CardFooter>
+                                    </Card>
+                                </TabsContent>
+                            </Tabs>
                         </Box>
                     </Collapse>
                 </TableCell>
@@ -120,7 +132,11 @@ const rows = [
     createData('田徑場', 356, 16.0, 49, 3.9, 1.5),
 ];
 
-export default function AuditTable() {
+export default function AuditTable(props: { audit_records: any }) {
+
+    const ass = [{ "placeused_serno": "30169", "place_serno": "7", "placeno": "C101", "placename": "101教室", "cust_name": "多田測試3", "use_date": "2024/7/26 上午 12:00:00", "use_section": "8", "people_cnt": "50", "ck_person": "王小明", "ck_create_date": "2024-07-10 13:12:26", "details": [{ "emp_eser": "1", "emp_name": "吳威佑", "real_people": "48", "auditRemark": "", "create_date": "2024-07-10 14:40:13" }, { "emp_eser": "1", "emp_name": "吳威佑", "real_people": "48", "auditRemark": "test", "create_date": "2024-07-10 14:41:16" }] }, { "placeused_serno": "30170", "place_serno": "7", "placeno": "C101", "placename": "101教室", "cust_name": "多田測試3", "use_date": "2024/7/26 上午 12:00:00", "use_section": "13", "people_cnt": "50", "ck_person": "", "ck_create_date": "", "details": [] }]
+    const { audit_records } = props;
+    console.log(typeof (audit_records))
     return (
         <TableContainer component={Paper} className=''>
             <Table aria-label="collapsible table">
@@ -135,8 +151,8 @@ export default function AuditTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <Row key={row.name} row={row} />
+                    {audit_records.map((audit_record: any, index: number) => (
+                        <Row key={index} audit_record={audit_record} />
                     ))}
                 </TableBody>
             </Table>
