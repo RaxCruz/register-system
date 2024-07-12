@@ -1,3 +1,6 @@
+
+'use server'
+
 import { getTimeStamp } from "./getTimeStamp";
 import { makeSignature } from "./make-md5";
 

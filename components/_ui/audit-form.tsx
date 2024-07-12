@@ -20,45 +20,76 @@ import {
 } from "@/components/ui/form"
 import { Checkbox } from '../ui/checkbox';
 import clsx from 'clsx';
+import { uploadAuditRecord } from '@/app/actions/audit-api';
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
+import { randomInt } from 'crypto';
 
-const formSchema = z.object({
-    auditName: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    auditNum: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    auditMemo: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    auditTime: z.string().min(2, {
-        message: "Username must be at least 2 characters.",
-    }),
-    isAudit: z.boolean(),
-})
 
-export default function AuditForm() {
+export default function AuditForm(props: { audit_details: any }) {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(searchParams.toString());
+            params.set(name, value);
+
+            return params.toString();
+        },
+        [searchParams]
+    );
+    const { audit_details } = props;
+    const formSchema = z.object({
+        auditName: z.string().min(2, {
+            message: "Username must be at least 2 characters.",
+        }),
+        auditNum: z.string().min(2, {
+            message: "Username must be at least 2 characters.",
+        }),
+        auditMemo: z.string().min(2, {
+            message: "Username must be at least 2 characters.",
+        }),
+        auditTime: z.string(),
+        isAudit: z.boolean(),
+    })
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            auditName: "",
-            auditNum: "",
-            auditMemo: "",
-            auditTime: "",
+            auditName: '',
+            auditNum: '',
+            auditMemo: '',
+            auditTime: '',
             isAudit: false,
         },
     })
+    function getRandomString(length: any) {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = Math.floor(Math.random() * characters.length);
+            result += characters[randomIndex];
+        }
+        return result;
+    }
 
+    // 示例：生成一个长度为 10 的随机字符串
+    console.log(getRandomString(10));
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        await uploadAuditRecord('')
+        router.replace('')
+        router.push(pathname + "?" + createQueryString("filter", 'C101'))
         console.log(values)
     }
+
     return (
         <Card x-chunk="dashboard-07-chunk-0" className=" shadow-none rounded-none">
             <CardHeader>
                 {/* <CardTitle>Product Details</CardTitle> */}
                 <CardDescription>
-                    上次稽核時間:<span> 2024-06-24 16:15:15</span>
+                    上次稽核時間:<span> {audit_details.length ? audit_details[0].create_date : '尚未有稽核紀錄'}</span>
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -71,7 +102,7 @@ export default function AuditForm() {
                                 <FormItem>
                                     <FormLabel>稽核人員</FormLabel>
                                     <FormControl>
-                                        <Input className="text-base" placeholder="shadcn" {...field} />
+                                        <Input className="text-base" placeholder={audit_details.length ? audit_details[0].emp_name : ''} {...field} />
                                     </FormControl>
                                     <FormDescription>
                                         This is your public display name.
@@ -87,7 +118,7 @@ export default function AuditForm() {
                                 <FormItem>
                                     <FormLabel>稽核人數</FormLabel>
                                     <FormControl>
-                                        <Input className="text-base" placeholder="shadcn" {...field} />
+                                        <Input className="text-base" placeholder={audit_details.length ? audit_details[0].real_people : ''} {...field} />
                                     </FormControl>
                                     <FormDescription>
                                         This is your public display name.
@@ -103,7 +134,7 @@ export default function AuditForm() {
                                 <FormItem>
                                     <FormLabel>備註</FormLabel>
                                     <FormControl>
-                                        <Textarea placeholder="shadcn" {...field} />
+                                        <Textarea placeholder={audit_details.length ? audit_details[0].auditRemark : ''} {...field} />
                                     </FormControl>
                                     <FormDescription>
                                         This is your public display name.

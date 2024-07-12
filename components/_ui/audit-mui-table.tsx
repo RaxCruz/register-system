@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/tabs"
 import { Badge } from '../ui/badge';
 import { AlignStartVertical, CheckCheck, FileClock, HardDriveUpload, Kanban, ListChecks } from 'lucide-react';
+import AuditRecords from './audit-records';
+
 function createData(
     name: string,
     calories: number,
@@ -60,10 +62,9 @@ function createData(
 function Row(props: { audit_record: any }) {
     const { audit_record } = props;
     const [open, setOpen] = React.useState(false);
-
     return (
         <React.Fragment>
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }} >
                 <TableCell>
                     <IconButton
                         aria-label="expand row"
@@ -83,37 +84,17 @@ function Row(props: { audit_record: any }) {
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} className='p-0'>
                     <Collapse in={open} timeout="auto" unmountOnExit >
-                        <Box sx={{ margin: 0, border: 'solid red 2px', position: 'relative' }}>
+                        <Box sx={{ margin: 0, border: `${audit_record.details.length ? 'solid green 2px' : 'solid red 2px'}`, position: 'relative' }}>
                             <Tabs defaultValue="account" className="h-full" >
                                 <TabsList className="grid grid-cols-2 absolute right-3 top-5 p-0 h-auto w-auto">
                                     <TabsTrigger value="account" className='data-[state=active]:bg-green-300'><HardDriveUpload size={16} /></TabsTrigger>
                                     <TabsTrigger value="password" className='data-[state=active]:bg-green-300'><AlignStartVertical size={16} /></TabsTrigger>
                                 </TabsList>
                                 <TabsContent value="account" className='mt-0'>
-                                    <AuditForm />
+                                    <AuditForm audit_details={audit_record.details} />
                                 </TabsContent>
                                 <TabsContent value="password" className='mt-0'>
-                                    <Card>
-                                        <CardHeader>
-                                            <CardTitle>Password</CardTitle>
-                                            <CardDescription>
-                                                Change your password here. After saving, you'll be logged out.
-                                            </CardDescription>
-                                        </CardHeader>
-                                        <CardContent className="space-y-2">
-                                            <div className="space-y-1">
-                                                <Label htmlFor="current">Current password</Label>
-                                                <Input id="current" type="password" />
-                                            </div>
-                                            <div className="space-y-1">
-                                                <Label htmlFor="new">New password</Label>
-                                                <Input id="new" type="password" />
-                                            </div>
-                                        </CardContent>
-                                        <CardFooter>
-                                            <Button>Save password</Button>
-                                        </CardFooter>
-                                    </Card>
+                                    <AuditRecords audit_details={audit_record.details} />
                                 </TabsContent>
                             </Tabs>
                         </Box>
@@ -136,7 +117,7 @@ export default function AuditTable(props: { audit_records: any }) {
 
     const ass = [{ "placeused_serno": "30169", "place_serno": "7", "placeno": "C101", "placename": "101教室", "cust_name": "多田測試3", "use_date": "2024/7/26 上午 12:00:00", "use_section": "8", "people_cnt": "50", "ck_person": "王小明", "ck_create_date": "2024-07-10 13:12:26", "details": [{ "emp_eser": "1", "emp_name": "吳威佑", "real_people": "48", "auditRemark": "", "create_date": "2024-07-10 14:40:13" }, { "emp_eser": "1", "emp_name": "吳威佑", "real_people": "48", "auditRemark": "test", "create_date": "2024-07-10 14:41:16" }] }, { "placeused_serno": "30170", "place_serno": "7", "placeno": "C101", "placename": "101教室", "cust_name": "多田測試3", "use_date": "2024/7/26 上午 12:00:00", "use_section": "13", "people_cnt": "50", "ck_person": "", "ck_create_date": "", "details": [] }]
     const { audit_records } = props;
-    console.log(typeof (audit_records))
+    //console.log(audit_records)
     return (
         <TableContainer component={Paper} className=''>
             <Table aria-label="collapsible table">

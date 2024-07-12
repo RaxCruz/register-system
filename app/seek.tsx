@@ -1,26 +1,61 @@
-import { Badge } from "lucide-react";
+"use client"
 
-<div className="flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all">
-  <div className="flex w-full flex-col gap-1">
-    <div className="flex items-center">
-      <div className="flex items-center gap-2">
-        <div className="font-semibold">123</div>
-        <span className="flex h-2 w-2 rounded-full bg-blue-600" />
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
 
-      </div>
-      <div className="ml-auto text-xs">
-        456
-      </div>
-    </div>
-    <div className="text-xs font-medium">789</div>
-  </div>
-  <div className="line-clamp-2 text-xs text-muted-foreground">
-    120
-  </div>
-  <div className="flex items-center gap-2">
-    <Badge>
-      456
-    </Badge>
-  </div>
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { toast } from "@/components/ui/use-toast"
 
-</div>
+const FormSchema = z.object({
+  username: z.string().min(2, {
+    message: "Username must be at least 2 characters.",
+  }),
+})
+
+export default function InputForm() {
+  const form = useForm<z.infer<typeof FormSchema>>({
+    resolver: zodResolver(FormSchema),
+    defaultValues: {
+      username: "",
+    },
+  })
+
+  function onSubmit(data: z.infer<typeof FormSchema>) {
+    console.log("Jiji")
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+        <FormField
+          control={form.control}
+          name="username"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Username</FormLabel>
+              <FormControl>
+                <Input placeholder="shadcn" {...field} />
+              </FormControl>
+              <FormDescription>
+                This is your public display name.
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit">Submit</Button>
+      </form>
+    </Form>
+  )
+}
