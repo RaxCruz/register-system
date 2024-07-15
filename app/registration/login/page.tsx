@@ -1,6 +1,7 @@
 // server component 裡面會呼叫 register-card
 
-import { getTimeStamp, register } from "@/app/actions/register-api";
+import { register } from "@/app/actions/register-api";
+import { getVenueInfo } from "@/app/actions/venue-info";
 import RegisterForm from "@/components/_ui/register-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,8 +19,15 @@ import {
 } from "lucide-react";
 
 const a = register('raxcruz', {})
-export default function LoginForm() {
-
+export default async function LoginForm({
+    params,
+    searchParams,
+}: {
+    params: { raceId: string };
+    searchParams: { placeused_serno: string };
+}) {
+    const placeused_serno = searchParams.placeused_serno;
+    const venueDatas = await getVenueInfo('raxcruz', '');
     return (
         <div className="h-dvh overflow-hidden mx-auto flex justify-between flex-col max-w-md md:max-w-xl">
             <div className="h-full flex flex-col justify-between overflow-hidden">
@@ -53,7 +61,17 @@ export default function LoginForm() {
                                     >
                                         <Clock className="h-3.5 w-3.5" />
                                         <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
-                                            2024/06/04
+                                            {venueDatas[0].use_date}
+                                        </span>
+                                    </Button>
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="h-8 gap-1 pl-2 pr-2 bg-green-600 text-white"
+                                    >
+
+                                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                                            {venueDatas[0].use_section}~{venueDatas[0].use_section_end}
                                         </span>
                                     </Button>
                                 </div>
@@ -61,7 +79,7 @@ export default function LoginForm() {
                         </Card>
                     </div>
                 </div>
-                <RegisterForm />
+                <RegisterForm venueDatas={venueDatas} />
             </div>
         </div>
     );

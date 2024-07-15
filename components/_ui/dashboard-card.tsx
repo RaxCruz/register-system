@@ -4,6 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui
 import { ComponentProps } from 'react';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Button } from '../ui/button';
+import { ArrowRight } from 'lucide-react';
+import { Separator } from '../ui/separator';
 
 export default function DashboardCard() {
     function getBadgeVariantFromLabel(
@@ -47,7 +49,7 @@ export default function DashboardCard() {
                         {/* <div className="text-xs font-medium">789</div> */}
                     </div>
                     <div className="line-clamp-2 text-xs text-muted-foreground">
-                        🔺紅色為已額滿時段
+                        🔺紅色為尚未稽核時段
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
                         <Popover>
@@ -57,7 +59,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -70,9 +72,17 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
-                                    <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
-                                </Badge>
+                                <div>
+                                    ✅目前稽核人數
+                                    <Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                        <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
+                                    </Badge>
+                                </div>
+
+                                <div className='flex flex-1 border-l-2 border-gray-200 ml-2 pl-2 '>
+
+                                    <Button className='h-auto p-1 w-full flex-1' variant={'secondary'}>稽核<ArrowRight size={16}></ArrowRight></Button>
+                                </div>
                             </PopoverContent>
                         </Popover>
                         <Popover>
@@ -82,7 +92,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -94,7 +104,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('occupied')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('occupied')}>
                                     <span>53</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -106,7 +116,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -118,7 +128,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -130,7 +140,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -142,7 +152,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>
@@ -154,7 +164,7 @@ export default function DashboardCard() {
                                 </Badge>
                             </PopoverTrigger>
                             <PopoverContent className="w-70 flex items-center">
-                                ✅目前預約人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
                                     <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
                                 </Badge>
                             </PopoverContent>

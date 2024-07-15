@@ -74,14 +74,9 @@ export default function AuditForm(props: { audit_details: any }) {
         return result;
     }
 
-    // 示例：生成一个长度为 10 的随机字符串
-    console.log(getRandomString(10));
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         await uploadAuditRecord('')
-        router.replace('')
-        router.push(pathname + "?" + createQueryString("filter", 'C101'))
-        console.log(values)
     }
 
     return (

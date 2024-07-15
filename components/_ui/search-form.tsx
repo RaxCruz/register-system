@@ -63,14 +63,14 @@ export default function SearchForm() {
                                                 <SelectValue placeholder="Select a model" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="genesis">
+                                                <SelectItem value="C101">
                                                     <div className="flex items-start gap-3 text-muted-foreground">
 
                                                         <div className="grid gap-0.5">
                                                             <p>
 
                                                                 <span className="font-medium text-foreground">
-                                                                    棒球場
+                                                                    C101教室
                                                                 </span>
                                                             </p>
                                                             <p className="text-xs" data-description>

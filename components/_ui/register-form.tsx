@@ -14,7 +14,17 @@ import { Label } from "@/components/ui/label";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
-
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import {
     Form,
     FormControl,
@@ -25,6 +35,9 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { register } from "@/app/actions/register-api";
+import { useState } from "react";
+import { Check } from "lucide-react";
 
 const formSchema = z.object({
     registerName: z.string().min(2, {
@@ -37,7 +50,10 @@ const formSchema = z.object({
     venuePeriod: z.string(),
 })
 
-export default function RegisterForm() {
+export default function RegisterForm(props: { venueDatas: any }) {
+    const [showAlert, setShowAlert] = useState(false)
+    const { venueDatas } = props
+    const [register_res, setRegister_res] = useState([])
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -47,50 +63,64 @@ export default function RegisterForm() {
             venuePeriod: ""
         },
     })
+    function getRegisterStatus(data: any) {
+        //回傳 '已報到' '報到成功' '報到失敗'
+        if (data.result) {
+            return { 'title': '報到成功', 'description': '您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <Check className="" color="green" ></Check> }
+        } else {
+            if (data.msg === '已報到過，請勿在報到') {
+                return { 'title': '已報到過，請勿在報到', 'description': '您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <Check className="" color="green" ></Check> }
+            } else {
+                return { 'title': '報到失敗', 'description': '您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <Check className="" color="green" ></Check> }
+            }
+        }
+    }
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        // data = [
+        //     {
+        //         "placeused_serno": "30169",
+        //         "place_serno": "7",
+        //         "placeno": "C101",
+        //         "placename": "101教室",
+        //         "use_date": "2024-07-26",
+        //         "ck_person": "王小明",
+        //         "ck_id": "9999"
+        //     }
+        // ]
+        const req = [
+            {
+                "placeused_serno": venueDatas[0].placeused_serno,
+                "place_serno": venueDatas[0].place_serno,
+                "placeno": venueDatas[0].placeno,
+                "placename": venueDatas[0].placename,
+                "use_date": venueDatas[0].use_date,
+                "ck_person": values.registerName,
+                "ck_id": values.rigisterIDNumber
+            }
+        ]
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-
-        console.log(values)
+        const res = await register('raxcruz', req)
+        setRegister_res(res)
+        setShowAlert(true)
+        console.log(res)
     }
     return (
         <Card className="mx-auto w-full border-none">
+            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                <AlertDialogContent >
+                    <AlertDialogHeader className="bg-red-300">
+                        <AlertDialogTitle className="justify-center items-center flex flex-col">{getRegisterStatus(register_res).icon}{getRegisterStatus(register_res).title}</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogAction>確認</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
             <CardHeader></CardHeader>
             <CardContent>
-                {/* <div className="grid gap-4">
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="m@example.com"
-              required
-              className="text-base"
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
-            </div>
-            <Input
-              id="password"
-              type="password"
-              required
-              className="text-base"
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-        </div>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
-            Sign up
-          </Link>
-        </div> */}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <FormField

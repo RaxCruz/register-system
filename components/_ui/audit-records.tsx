@@ -1,4 +1,4 @@
-import { ComponentProps } from "react"
+import { ComponentProps, useEffect } from "react"
 import formatDistanceToNow from "date-fns/formatDistanceToNow"
 
 import { cn } from "@/lib/utils"
@@ -6,11 +6,19 @@ import { ScrollArea } from "../ui/scroll-area"
 import { Badge } from "../ui/badge"
 import { Card, CardContent, CardDescription, CardHeader } from "../ui/card"
 import { AlarmClock } from "lucide-react"
+import { getAuditRecord } from "@/app/actions/audit-api"
 
 
-export default function AuditRecords(props: { audit_details: any }) {
-    const { audit_details } = props;
-    console.log(audit_details)
+export default async function AuditRecords(props: { audit_details: any }) {
+
+    // let { audit_details } = props;
+
+    let audit_records = await getAuditRecord('')
+    //let audit_details = audit_records.details
+
+
+    //audit_details = await getAuditDetails()
+    console.log(audit_records)
     return (
         <Card className="shadow-none rounded-none">
             <CardHeader>
