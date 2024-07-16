@@ -37,7 +37,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { register } from "@/app/actions/register-api";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, X } from "lucide-react";
 
 const formSchema = z.object({
     registerName: z.string().min(2, {
@@ -71,7 +71,7 @@ export default function RegisterForm(props: { venueDatas: any }) {
             if (data.msg === '已報到過，請勿在報到') {
                 return { 'title': '已報到過，請勿在報到', 'description': '您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <Check className="" color="green" ></Check> }
             } else {
-                return { 'title': '報到失敗', 'description': '您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <Check className="" color="green" ></Check> }
+                return { 'title': '報到失敗', 'description': '報到失敗，請再次檢查輸入資料是否有誤。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！', 'icon': <X className="" color="red" ></X> }
             }
         }
     }
@@ -108,10 +108,12 @@ export default function RegisterForm(props: { venueDatas: any }) {
         <Card className="mx-auto w-full border-none">
             <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
                 <AlertDialogContent >
-                    <AlertDialogHeader className="bg-red-300">
-                        <AlertDialogTitle className="justify-center items-center flex flex-col">{getRegisterStatus(register_res).icon}{getRegisterStatus(register_res).title}</AlertDialogTitle>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle className="justify-center items-center flex flex-col">{getRegisterStatus(register_res).icon}
+                            <p className={getRegisterStatus(register_res).title === '報到失敗' ? 'text-red-500' : ''}>{getRegisterStatus(register_res).title}</p>
+                        </AlertDialogTitle>
                         <AlertDialogDescription>
-                            您已經報到成功。如有任何疑問，請隨時聯繫我們的工作人員。我們感謝您的理解與配合！
+                            {getRegisterStatus(register_res).description}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

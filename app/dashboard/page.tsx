@@ -37,8 +37,11 @@ import {
 import AuditTable from "@/components/_ui/audit-mui-table"
 import SearchForm from "@/components/_ui/search-form"
 import DashboardTable from "@/components/_ui/dashboard-table"
+import { getVenueMenuRead, getVenueRentInfo } from "../actions/venue-info"
 
-export default function Dashboard() {
+export default async function Dashboard() {
+    const venueMenus = await getVenueMenuRead('raxcruz')
+    const venueRentInfos = await getVenueRentInfo('raxcruz', '')
     return (
         <TooltipProvider>
             <div className="flex min-h-screen  flex-col ">
@@ -104,7 +107,7 @@ export default function Dashboard() {
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="overflow-hidden p-3 w-[100vw] md:container">
-                                    <DashboardTable />
+                                    <DashboardTable venueMenus={venueMenus} venueRentInfos={venueRentInfos} />
                                 </CardContent>
                                 <CardFooter>
                                     <div className="text-xs text-muted-foreground">

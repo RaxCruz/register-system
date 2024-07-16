@@ -19,6 +19,8 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import AuditForm from './audit-form';
 import DashboardCard from './dashboard-card';
+import { getVenueMenu } from '@/app/actions/venue-info';
+import { object } from 'zod';
 
 function createData(
     name: string,
@@ -50,8 +52,8 @@ function createData(
     };
 }
 
-function Row(props: { row: ReturnType<typeof createData> }) {
-    const { row } = props;
+function Row(props: { venueMenu: ReturnType<typeof createData> }) {
+    const { venueMenu } = props;
     const [open, setOpen] = React.useState(false);
 
     return (
@@ -67,17 +69,18 @@ function Row(props: { row: ReturnType<typeof createData> }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    {row.name}
+                    {venueMenu.placename}
                 </TableCell>
-                <TableCell align="right">{row.calories}</TableCell>
-                <TableCell align="right">{row.fat}</TableCell>
-                <TableCell align="right">{row.carbs}</TableCell>
+                <TableCell align="right">{ }</TableCell>
+                <TableCell align="right">{ }</TableCell>
+                <TableCell align="right">{ }</TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} className='p-0'>
                     <Collapse in={open} timeout="auto" unmountOnExit >
                         <Box sx={{ margin: 0 }}>
-                            <DashboardCard />
+                            <DashboardCard venueDetails={venueMenu.sessions} />
+
                         </Box>
                     </Collapse>
                 </TableCell>
@@ -94,7 +97,39 @@ const rows = [
     createData('田徑場', 356, 16.0, 49, 3.9, 1.5),
 ];
 
-export default function DashboardTable() {
+export default function DashboardTable(props = { venueMenus: object, venueRentInfos: object }) {
+    const { venueMenus } = props
+    const { venueRentInfos } = props
+
+    // const mergeVenues = [
+    //     {
+    //         'placename':"101",
+    //          'sessions':[
+    //             {session},{},{}
+    //          ]
+    //     }
+    // ]
+
+    let mergeVenueDatas = venueMenus
+    console.log(typeof (mergeVenueDatas))
+    mergeVenueDatas.map((mergeVenueData: any) => {
+        mergeVenueData.sessions = []
+    })
+    console.log(venueRentInfos)
+    venueRentInfos.map((venueRentInfo: any) => {
+        // mergeVenueData =
+        // {
+        //     "serno": 7,
+        //     "placeno": "C101",
+        //     "placename": "101教室"
+        // }
+        mergeVenueDatas.map((mergeVenueData: any) => {
+            if (venueRentInfo.placename === mergeVenueData.placename) {
+                mergeVenueData.sessions.push(venueRentInfo)
+            }
+        })
+    })
+    console.log(mergeVenueDatas)
     return (
         <TableContainer component={Paper} className=''>
             <Table aria-label="collapsible table">
@@ -109,8 +144,8 @@ export default function DashboardTable() {
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {rows.map((row) => (
-                        <Row key={row.name} row={row} />
+                    {mergeVenueDatas.map((mergeVenueData: any, index: any) => (
+                        <Row key={index} venueMenu={mergeVenueData} />
                     ))}
                 </TableBody>
             </Table>
