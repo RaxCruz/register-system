@@ -19,7 +19,6 @@ import { Input } from '../ui/input';
 import { Textarea } from '../ui/textarea';
 import AuditForm from './audit-form';
 import DashboardCard from './dashboard-card';
-import { getVenueMenu } from '@/app/actions/venue-info';
 import { object } from 'zod';
 
 function createData(
@@ -52,9 +51,13 @@ function createData(
     };
 }
 
-function Row(props: { venueMenu: ReturnType<typeof createData> }) {
-    const { venueMenu } = props;
-    const [open, setOpen] = React.useState(false);
+function Row(props: { mergeVenueData: any, date: any, length: any }) {
+
+    const { mergeVenueData } = props;
+    const { date } = props;
+    const { length } = props;
+    let openState = length === 1 ? true : false
+    const [open, setOpen] = React.useState(openState);
 
     return (
         <React.Fragment>
@@ -69,17 +72,18 @@ function Row(props: { venueMenu: ReturnType<typeof createData> }) {
                     </IconButton>
                 </TableCell>
                 <TableCell component="th" scope="row">
-                    {venueMenu.placename}
+                    {mergeVenueData.placename}
                 </TableCell>
-                <TableCell align="right">{ }</TableCell>
-                <TableCell align="right">{ }</TableCell>
-                <TableCell align="right">{ }</TableCell>
+                <TableCell align="center">{mergeVenueData.placeno}</TableCell>
+                <TableCell align="right">{mergeVenueData.people}</TableCell>
+
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6} className='p-0'>
                     <Collapse in={open} timeout="auto" unmountOnExit >
                         <Box sx={{ margin: 0 }}>
-                            <DashboardCard venueDetails={venueMenu.sessions} />
+
+                            <DashboardCard venueDetails={mergeVenueData.sessions} capacity={mergeVenueData.people} date={date} />
 
                         </Box>
                     </Collapse>
@@ -96,40 +100,32 @@ const rows = [
     createData('體育場B', 305, 3.7, 67, 4.3, 2.5),
     createData('田徑場', 356, 16.0, 49, 3.9, 1.5),
 ];
-
-export default function DashboardTable(props = { venueMenus: object, venueRentInfos: object }) {
+// @ts-ignore
+export default function DashboardTable(props = { venueMenus: object, venueRentInfos: object, venueStatus: object, date: any }) {
     const { venueMenus } = props
     const { venueRentInfos } = props
-
-    // const mergeVenues = [
-    //     {
-    //         'placename':"101",
-    //          'sessions':[
-    //             {session},{},{}
-    //          ]
-    //     }
-    // ]
-
+    const { venueStatus } = props
+    const { date } = props
     let mergeVenueDatas = venueMenus
-    console.log(typeof (mergeVenueDatas))
+    // @ts-ignore
     mergeVenueDatas.map((mergeVenueData: any) => {
         mergeVenueData.sessions = []
     })
-    console.log(venueRentInfos)
-    venueRentInfos.map((venueRentInfo: any) => {
+    // @ts-ignore
+    venueStatus.map((venueRentInfo: any) => {
         // mergeVenueData =
         // {
         //     "serno": 7,
         //     "placeno": "C101",
         //     "placename": "101教室"
         // }
+        // @ts-ignore
         mergeVenueDatas.map((mergeVenueData: any) => {
             if (venueRentInfo.placename === mergeVenueData.placename) {
-                mergeVenueData.sessions.push(venueRentInfo)
+                mergeVenueData.sessions.push(...venueRentInfo.details)
             }
         })
     })
-    console.log(mergeVenueDatas)
     return (
         <TableContainer component={Paper} className=''>
             <Table aria-label="collapsible table">
@@ -137,16 +133,19 @@ export default function DashboardTable(props = { venueMenus: object, venueRentIn
                     <TableRow>
                         <TableCell />
                         <TableCell className='text-md font-bold'>場地</TableCell>
-                        <TableCell className='text-md font-bold' align="right">時段</TableCell>
-                        <TableCell className='text-md font-bold' align="right">人數</TableCell>
-                        <TableCell className='text-md font-bold' align="right">稽核人數</TableCell>
+                        <TableCell className='text-md font-bold' align="center"><span className='whitespace-nowrap'>場地</span><span className='whitespace-nowrap'>編號</span></TableCell>
+                        <TableCell className='text-md font-bold' align="right"><span className='whitespace-nowrap'>容納</span><span className='whitespace-nowrap'>人數</span></TableCell>
+
 
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {mergeVenueDatas.map((mergeVenueData: any, index: any) => (
-                        <Row key={index} venueMenu={mergeVenueData} />
-                    ))}
+
+                    {
+                        // @ts-ignore
+                        mergeVenueDatas.map((mergeVenueData: any, index: any) => (
+                            <Row key={index} mergeVenueData={mergeVenueData} date={date} length={mergeVenueDatas.length} />
+                        ))}
                 </TableBody>
             </Table>
         </TableContainer>

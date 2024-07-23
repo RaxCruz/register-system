@@ -9,22 +9,16 @@ import { AlarmClock } from "lucide-react"
 import { getAuditRecord } from "@/app/actions/audit-api"
 
 
-export default function AuditRecords(props: { audit_details: any }) {
+export default function AuditPeople(props: { audit_details: any }) {
 
     let { audit_details } = props;
-
-    //let audit_records = await getAuditRecord('')
-    // let audit_details = audit_records.details
-
-
-    //audit_details = await getAuditDetails()
 
     return (
         <Card className="shadow-none rounded-none">
             <CardHeader>
                 {/* <CardTitle>Product Details</CardTitle> */}
                 <CardDescription>
-                    稽核歷史紀錄:<span> {audit_details.length}</span><span>筆</span>
+                    已報到人數:<span> {audit_details.length}</span><span>人</span>
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -40,7 +34,7 @@ export default function AuditRecords(props: { audit_details: any }) {
                                 <div className="flex w-full flex-col gap-1">
                                     <div className="flex items-center">
                                         <div className="flex items-center gap-2">
-                                            <div className="font-semibold">{audit_detail.emp_name}</div>
+                                            <div className="font-semibold">{audit_detail.ck_person}</div>
                                             {/* {!item.read && (
                     <span className="flex h-2 w-2 rounded-full bg-blue-600" />
                   )} */}
@@ -53,19 +47,18 @@ export default function AuditRecords(props: { audit_details: any }) {
                                             {timeAgo(audit_detail.create_date)}
                                         </div>
                                     </div>
+
                                     <div className="text-xs font-medium"><span>🔸</span><span className=" text-xs text-muted-foreground break-normal">
-                                        稽核時間:
+                                        報到時間:
                                     </span> {audit_detail.create_date}</div>
                                 </div>
-                                <div className=" text-xs text-muted-foreground break-normal">
-                                    {audit_detail.auditRemark}
-                                </div>
+
                                 <div className="flex gap-1">
                                     <Badge variant={getBadgeVariantFromLabel('personal')} className="flex items-center gap-1">
-                                        🙍‍♂️<span>{audit_detail.real_people}</span>
+                                        🎫<span>{audit_detail.ck_id}</span>
                                     </Badge>
                                     <Badge variant={getBadgeVariantFromLabel('personal')} className="flex items-center gap-1">
-                                        #稽核人數
+                                        #身分證後四碼
                                     </Badge>
                                 </div>
                                 {/* 
@@ -99,10 +92,6 @@ function getBadgeVariantFromLabel(
 
     return "secondary"
 }
-
-
-
-
 
 
 function timeAgo(inputTime: any) {

@@ -25,6 +25,7 @@ export default function TableFilter() {
     const searchParams = useSearchParams();
     const createQueryString = useCallback(
         (name: string, value: string) => {
+            // @ts-ignore
             const params = new URLSearchParams(searchParams.toString());
             params.set(name, value);
 

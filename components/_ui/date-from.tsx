@@ -12,9 +12,39 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover"
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useCallback, useState } from "react";
 
 export default function DatePickerFrom() {
-    const [date, setDate] = React.useState<Date>()
+    function formatDate(inputDateString: any) {
+        const date = new Date(inputDateString);
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}`;
+    }
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const createQueryString = useCallback(
+        (name: string, value: string) => {
+            const params = new URLSearchParams(searchParams?.toString());
+            params.set(name, value);
+
+            return params.toString();
+        },
+        [searchParams]
+    );
+    const [date, setDate] = React.useState<Date>(new Date())
+
+    const handleDateChange = (value: any) => {
+
+        setDate(value)
+        router.push(pathname + "?" + createQueryString("date", formatDate(value)));
+    }
+
 
     return (
         <Popover>
@@ -34,7 +64,7 @@ export default function DatePickerFrom() {
                 <Calendar
                     mode="single"
                     selected={date}
-                    onSelect={setDate}
+                    onSelect={handleDateChange}
                     initialFocus
                 />
             </PopoverContent>

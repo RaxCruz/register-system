@@ -32,7 +32,7 @@ export default function InputForm() {
   })
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("Jiji")
+
   }
 
   return (

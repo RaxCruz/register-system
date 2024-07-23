@@ -2,6 +2,7 @@
 
 import { register } from "@/app/actions/register-api";
 import { getVenueInfo } from "@/app/actions/venue-info";
+import ErrorFinding from "@/components/_ui/error-nofinding";
 import RegisterForm from "@/components/_ui/register-form";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,7 +19,6 @@ import {
     Copy,
 } from "lucide-react";
 
-const a = register('raxcruz', {})
 export default async function LoginForm({
     params,
     searchParams,
@@ -27,9 +27,10 @@ export default async function LoginForm({
     searchParams: { placeused_serno: string };
 }) {
     const placeused_serno = searchParams.placeused_serno;
-    console.log(placeused_serno)
+
+    if (!placeused_serno) return (<ErrorFinding />)
     const venueDatas = await getVenueInfo('raxcruz', placeused_serno);
-    console.log(venueDatas)
+    if (!venueDatas) return (<ErrorFinding />)
     return (
         <div className="h-dvh overflow-hidden mx-auto flex justify-between flex-col max-w-md md:max-w-xl">
             <div className="h-full flex flex-col justify-between overflow-hidden">
@@ -62,7 +63,7 @@ export default async function LoginForm({
                                         className="h-8 gap-1 pl-2 pr-2"
                                     >
                                         <Clock className="h-3.5 w-3.5" />
-                                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                                        <span className="">
                                             {venueDatas[0].use_date}
                                         </span>
                                     </Button>
@@ -72,7 +73,7 @@ export default async function LoginForm({
                                         className="h-8 gap-1 pl-2 pr-2 bg-green-600 text-white"
                                     >
 
-                                        <span className="lg:sr-only xl:not-sr-only xl:whitespace-nowrap">
+                                        <span className="">
                                             {venueDatas[0].use_section}:00~{venueDatas[0].use_section_end}:00
                                         </span>
                                     </Button>

@@ -1,4 +1,4 @@
-
+/* eslint-disable */
 import { Badge } from '../ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { ComponentProps, useState } from 'react';
@@ -15,10 +15,17 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-export default function DashboardCard(props: { venueDetails: any }) {
+import { getNowDate } from '@/app/actions/getTimeStamp';
+import { getCookie } from 'cookies-next';
+export default function DashboardCard(props: { venueDetails: any, capacity: any, date: any }) {
     const [session, setSession] = useState(8)
     const { venueDetails } = props
-    console.log(venueDetails.length)
+    const { capacity } = props
+    const { date } = props
+
+    let people_cnt = new Array(15).fill(0);//預計人數
+    let ck_cnt = new Array(15).fill(0);//報到人數
+    const searchDate = date
     function getBadgeVariantFromLabel(
         label: string
     ): ComponentProps<typeof Badge>["variant"] {
@@ -31,20 +38,21 @@ export default function DashboardCard(props: { venueDetails: any }) {
         }
 
         if (["rent"].includes(label.toLowerCase())) {
-            return "secondary"
+            return "success"
         }
 
         return "secondary"
     }
     return (
         <Card x-chunk="dashboard-07-chunk-0" className="shadow-none rounded-none border-none">
-            <CardHeader>
+            <CardHeader className='px-3'>
                 {/* <CardTitle>Product Details</CardTitle> */}
-                <CardDescription>
-                    上次更新時間:<span> 2024-06-24 16:15:15</span>
+                <CardDescription >
+
+                    查詢日期:<span> {searchDate ? searchDate : getNowDate()}</span>
                 </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className='px-3'>
                 <div className="flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all">
                     <div className="flex w-full flex-col gap-1">
                         <div className="flex items-center">
@@ -60,41 +68,42 @@ export default function DashboardCard(props: { venueDetails: any }) {
                         {/* <div className="text-xs font-medium">789</div> */}
                     </div>
                     <div className="line-clamp-2 text-xs text-muted-foreground">
-                        🔺紅色為尚未稽核時段
+                        🧩綠色為有預訂時段
                     </div>
                     <div className="flex items-center gap-2 flex-wrap">
-                        {Array.from([8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21], (e, i) => {
-                            console.log(session, e)
+                        {Array.from([8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22], (e, i) => {
+                            let checked = [false, false, false, false, false, false, false, false, false, false, false, false, false, false, false]
                             return (
-                                <Popover>
+                                <Popover key={i}>
                                     <PopoverTrigger >
-                                        {venueDetails.map((venueDetail: any) => {
+                                        {venueDetails.map((venueDetail: any, index: any) => {
                                             let isRent = false
-                                            if (e >= venueDetail.use_section && e <= venueDetail.use_section_end) { isRent = true }
-                                            if (isRent) {
-                                                return (
-                                                    <Badge data-session={e} variant={session == e ? getBadgeVariantFromLabel('default') : getBadgeVariantFromLabel('rent')} onClick={(e) => {
-                                                        setSession(e.target.dataset.session)
-                                                    }}>
-                                                        {e}:00
-                                                    </Badge>
-                                                )
+                                            if (e >= venueDetail.use_section && e <= venueDetail.use_section_end) {
+                                                people_cnt[e - 8] = venueDetail.people_cnt
+                                                ck_cnt[e - 8] = venueDetail.ck_cnt
+                                                checked[e - 8] = true
+                                                isRent = true
                                             }
-                                            else {
-                                                return (
-                                                    <Badge data-session={e} variant={session == e ? getBadgeVariantFromLabel('default') : getBadgeVariantFromLabel('personal')} onClick={(e) => {
-                                                        setSession(e.target.dataset.session)
-                                                    }}>
-                                                        {e}:00
-                                                    </Badge>
-                                                )
-                                            }
-                                        })}
 
+                                        })
+
+                                        }
+                                        {
+                                            checked[e - 8] ? <Badge data-session={e} variant={session == e ? getBadgeVariantFromLabel('default') : getBadgeVariantFromLabel('rent')} onClick={(e) => {
+                                                // @ts-ignore
+                                                setSession(e.target.dataset.session)
+                                            }}>
+                                                {e}:00
+                                            </Badge> : <Badge data-session={e} variant={session == e ? getBadgeVariantFromLabel('default') : getBadgeVariantFromLabel('personal')} onClick={(e) => {
+                                                // @ts-ignore
+                                                setSession(e.target.dataset.session)
+                                            }}> {e}:00</Badge>
+                                        }
                                     </PopoverTrigger>
+
                                     <PopoverContent className="w-70 flex items-center">
-                                        ✅目前稽核人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
-                                            <span>23</span><span>&nbsp;/&nbsp;</span><span>53</span>
+                                        ✅報到/申請人數<Badge className="rounded-none ml-1" variant={getBadgeVariantFromLabel('personal')}>
+                                            <span>{ck_cnt[session - 8]}</span><span>&nbsp;/&nbsp;</span><span>{people_cnt[session - 8]}</span>
                                         </Badge>
                                     </PopoverContent>
                                 </Popover>
@@ -220,56 +229,38 @@ export default function DashboardCard(props: { venueDetails: any }) {
 
                 </div>
 
-                {venueDetails.map((venueDetail: any) => {
-                    if (session >= venueDetail.use_section && session <= venueDetail.use_section_end) {
-                        return (
-                            <div className="rounded-lg border bg-card text-card-foreground shadow-sm mt-4 " >
-                                <Table >
+                <div className="rounded-lg border bg-card text-card-foreground shadow-sm mt-4 " >
+                    <Table >
 
-                                    <TableHeader>
-                                        <div className='font-semibold p-2 flex items-center gap-2'>詳細資訊<span className="flex h-2 w-2 rounded-full bg-purple-600" /></div>
-                                        <TableRow>
-                                            <TableHead >租借單位</TableHead>
-                                            <TableHead>人數</TableHead>
-                                            <TableHead>租借時段</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow>
+                        <TableHeader>
+                            <div className='font-semibold p-2 flex items-center gap-2'>詳細資訊<span className="flex h-2 w-2 rounded-full bg-purple-600" /></div>
+                            <TableRow>
+                                <TableHead >租借單位</TableHead>
+                                <TableHead>人數</TableHead>
+                                <TableHead>租借時段</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {
+                                venueDetails.map((venueDetail: any, index: any) => {
+                                    //console.log("測試:", venueDetail.use_section, session, session > venueDetail.use_section, typeof (venueDetail.use_section))
+                                    // if (session >= parseInt(venueDetail.use_section, 10) && session <= parseInt(venueDetail.use_section_end, 10)) {
+
+                                    return (
+
+                                        <TableRow key={index}>
                                             <TableCell className="font-medium">{venueDetail.cust_name}</TableCell>
                                             <TableCell>{venueDetail.people_cnt}</TableCell>
-                                            <TableCell>{venueDetail.use_section}~{venueDetail.use_section_end}</TableCell>
+                                            <TableCell>{venueDetail.use_section}:00~{venueDetail.use_section_end}:00</TableCell>
                                         </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </div>
-                        )
-                    }
-                    else {
-                        return (
-                            <div className="rounded-lg border bg-card text-card-foreground shadow-sm mt-4 " >
-                                <Table >
 
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead className="w-[100px]">租借單位</TableHead>
-                                            <TableHead>人數</TableHead>
-                                            <TableHead>租借時段</TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell className="font-bold text-md text-center" colSpan={3}>尚無租借紀錄</TableCell>
+                                    )
+                                    // }
+                                })}
+                        </TableBody>
+                    </Table>
+                </div>
 
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </div>
-
-                        )
-                    }
-                })
-                }
             </CardContent>
         </Card>
     )

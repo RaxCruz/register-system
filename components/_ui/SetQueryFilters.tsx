@@ -30,6 +30,7 @@ export default function SetQueryFilters() {
 
     const createQueryString = useCallback(
         (name: string, value: string) => {
+            // @ts-ignore
             const params = new URLSearchParams(searchParams.toString());
             params.set(name, value);
 
@@ -39,7 +40,9 @@ export default function SetQueryFilters() {
     );
     const [date, setDate] = React.useState<Date>()
     const handleOnSelect = (value: string) => {
+        // @ts-ignore
         setDate(value)
+        // @ts-ignore
         router.push(pathname + "?" + createQueryString("filter", date));
     }
 
@@ -52,6 +55,7 @@ export default function SetQueryFilters() {
         <>
             <input
                 type="text"
+                // @ts-ignore
                 value={searchParams.get("filter") || ""}
                 onChange={(e) => {
                     router.push(pathname + "?" + createQueryString("filter", e.target.value));
@@ -89,6 +93,7 @@ export default function SetQueryFilters() {
                     <Calendar
                         mode="single"
                         selected={date}
+                        // @ts-ignore
                         onSelect={handleOnSelect}
                         initialFocus
                     />

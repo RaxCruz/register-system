@@ -1,4 +1,6 @@
 import {
+    ArrowLeft,
+    ArrowRight,
     File,
     ListFilter,
     PlusCircle,
@@ -13,15 +15,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import {
     Tabs,
     TabsContent,
@@ -37,128 +31,134 @@ import {
 import AuditTable from "@/components/_ui/audit-mui-table"
 import SearchForm from "@/components/_ui/search-form"
 import DashboardTable from "@/components/_ui/dashboard-table"
-import { getVenueMenuRead, getVenueRentInfo } from "../actions/venue-info"
+import { getVenueMenuRead, getVenueRentInfo, getVenueStatus } from "../../app/actions/venue-info"
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import { getCookie } from "cookies-next"
+import Link from "next/link"
+import Image from "next/image"
+import LogoutDropdown from "@/components/_ui/logout-dropdown"
+import { getNowDate } from "../actions/getTimeStamp"
+export default async function Dashboard({
+    params,
+    searchParams,
+}: {
+    params: { raceId: string };
+    searchParams: { place: string, date: string };
+}) {
 
-export default async function Dashboard() {
-    const venueMenus = await getVenueMenuRead('raxcruz')
-    const venueRentInfos = await getVenueRentInfo('raxcruz', '')
+    let venueStatus
+    let searchVenueStatus
+    let venueMenus = await getVenueMenuRead('raxcruz')
+    searchVenueStatus = venueMenus
+    let venueRentInfos
+    if (searchParams.date) {
+        venueStatus = await getVenueStatus('raxcruz', searchParams.date)
+        venueRentInfos = await getVenueRentInfo('raxcruz', searchParams.date)
+    }
+    else {
+        venueStatus = await getVenueStatus('raxcruz', getNowDate())
+        venueRentInfos = await getVenueRentInfo('raxcruz', getNowDate())
+    }
+
+    if (searchParams.place && searchParams.place != 'all')
+        venueMenus = venueMenus.filter((item: any) => item.placename === searchParams.place);
+
+    const username = getCookie('username', { cookies })
+    //const venueMenus = await getVenueMenuRead('raxcruz')
+
+    //const venueStatus = await getVenueStatus('raxcruz', '')
     return (
         <TooltipProvider>
-            <div className="flex min-h-screen  flex-col ">
-                <header className="sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4">
+            <div className="flex min-h-screen  flex-col bg-muted/40">
+                <header className="sticky top-0 z-10 flex h-[53px] items-center gap-1 border-b bg-background px-4 justify-between ">
+                    <Button
+                        variant="outline"
+                        size="icon"
+                        className="overflow-hidden rounded-full h-8 w-8 opacity-0"
+
+                    >
+                        <Image
+                            src="/placeholder-user.jpg"
+                            width={36}
+                            height={36}
+                            alt="Avatar"
+                            className="overflow-hidden rounded-full"
+                        />
+                    </Button>
                     <h1 className="text-xl font-semibold">儀表板</h1>
+                    <LogoutDropdown username={username} />
                 </header>
-                <div className="p-2 md:container">
-                    <SearchForm />
+                <div className="p-2 md:container bg-muted/40">
+                    <SearchForm venueMenus={searchVenueStatus} />
                 </div>
                 <main className="grid flex-1 items-start gap-4  sm:py-0 md:gap-8 md:container">
-                    <Tabs defaultValue="all">
+                    <Tabs defaultValue="filter">
                         <div className="flex items-center p-4">
-                            <TabsList>
-                                <TabsTrigger value="all">全部</TabsTrigger>
-                                <TabsTrigger value="active">上午</TabsTrigger>
-                                <TabsTrigger value="draft">下午</TabsTrigger>
-                                <TabsTrigger value="archived" className="hidden sm:flex">
-                                    晚上
-                                </TabsTrigger>
+                            <TabsList className="">
+                                <TabsTrigger value="filter" className="">已租借場地</TabsTrigger>
+                                <TabsTrigger value="all" className="">全部</TabsTrigger>
+
                             </TabsList>
                             <div className="ml-auto flex items-center gap-2">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="outline" size="sm" className="h-7 gap-1">
-                                            <ListFilter className="h-3.5 w-3.5" />
-                                            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                                Filter
-                                            </span>
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                                        <DropdownMenuSeparator />
-                                        <DropdownMenuCheckboxItem checked>
-                                            Active
-                                        </DropdownMenuCheckboxItem>
-                                        <DropdownMenuCheckboxItem>Draft</DropdownMenuCheckboxItem>
-                                        <DropdownMenuCheckboxItem>
-                                            Archived
-                                        </DropdownMenuCheckboxItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                                <Button size="sm" variant="outline" className="h-7 gap-1">
-                                    <File className="h-3.5 w-3.5" />
-                                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                        Export
-                                    </span>
-                                </Button>
-                                <Button size="sm" className="h-7 gap-1">
-                                    <PlusCircle className="h-3.5 w-3.5" />
-                                    <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-                                        Add Product
-                                    </span>
-                                </Button>
+                                <Link href="/dashboard/audit">
+                                    <Button size="sm" className="h-7 gap-1 ">
+                                        <span className="">
+                                            前往稽核
+                                        </span>
+                                        <ArrowRight className="h-3.5 w-3.5 " />
+                                    </Button>
+                                </Link>
                             </div>
                         </div>
                         <TabsContent value="all">
                             <Card className="rounded-none">
                                 <CardHeader>
-                                    <CardTitle>查詢結果</CardTitle>
+                                    <h1 className="text-lg font-semibold">查詢結果</h1>
                                     <CardDescription>
-                                        Manage your products and view their sales performance.
+
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent className="overflow-hidden p-3 w-[100vw] md:container">
-                                    <DashboardTable venueMenus={venueMenus} venueRentInfos={venueRentInfos} />
+                                    <DashboardTable venueMenus={venueMenus} venueRentInfos={venueRentInfos} venueStatus={venueStatus} date={searchParams.date} />
                                 </CardContent>
                                 <CardFooter>
-                                    <div className="text-xs text-muted-foreground">
+                                    {/* <div className="text-xs text-muted-foreground">
                                         Showing <strong>1-10</strong> of <strong>32</strong>{" "}
                                         products
-                                    </div>
+                                    </div> */}
                                 </CardFooter>
                             </Card>
                         </TabsContent>
-                        <TabsContent value="active">
-                            <Card x-chunk="dashboard-06-chunk-0">
+                        <TabsContent value="filter">
+                            <Card className="rounded-none">
                                 <CardHeader>
-                                    <CardTitle>查詢結果</CardTitle>
+                                    <h1 className="text-lg font-semibold">查詢結果</h1>
                                     <CardDescription>
-                                        Manage your products and view their sales performance.
+
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent className="overflow-hidden p-3 w-[100vw]">
-                                    <AuditTable />
+                                <CardContent className="overflow-hidden p-3 w-[100vw] md:container">
+                                    <DashboardTable venueMenus={getFilterVenue(venueRentInfos, venueMenus)} venueRentInfos={venueRentInfos} venueStatus={venueStatus} date={searchParams.date} />
                                 </CardContent>
                                 <CardFooter>
-                                    <div className="text-xs text-muted-foreground">
+                                    {/* <div className="text-xs text-muted-foreground">
                                         Showing <strong>1-10</strong> of <strong>32</strong>{" "}
                                         products
-                                    </div>
+                                    </div> */}
                                 </CardFooter>
                             </Card>
                         </TabsContent>
-                        <TabsContent value="draft">
-                            <Card x-chunk="dashboard-06-chunk-0">
-                                <CardHeader>
-                                    <CardTitle>稽核</CardTitle>
-                                    <CardDescription>
-                                        Manage your products and view their sales performance.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent className="overflow-hidden p-3 w-[100vw]">
-                                    <AuditTable />
-                                </CardContent>
-                                <CardFooter>
-                                    <div className="text-xs text-muted-foreground">
-                                        Showing <strong>1-10</strong> of <strong>32</strong>{" "}
-                                        products
-                                    </div>
-                                </CardFooter>
-                            </Card>
-                        </TabsContent>
+
                     </Tabs>
                 </main>
             </div>
-            {/* </div> */}
         </TooltipProvider>
     )
+}
+
+
+function getFilterVenue(venueRentInfos: any, venueMenus: any) {
+    const placenosB = venueRentInfos.map((item: any) => item.placeno);
+    return venueMenus.filter((item: any) => placenosB.includes(item.placeno));
 }

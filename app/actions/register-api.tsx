@@ -23,7 +23,7 @@ export async function register(fid: string, data: {}) {
     //     }
     // ]
     const req = { "fid": fid, "ts": ts, "s": s, "data": data }
-    // console.log(JSON.stringify(req))
+
     try {
         const response: any = await fetch('http://192.168.0.33:8080/api/Lease/CheckIn', {
             headers: {
