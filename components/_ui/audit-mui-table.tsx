@@ -155,7 +155,7 @@ export default function AuditTable(props: { audit_records: any, searchParams: an
         else {
             setAuditRecords(audit_records.filter((audit_record: any) => (audit_record.placename === searchParams.place)))
         }
-        console.log("尚未稽核debug:", audit_records)
+
 
     }
 
